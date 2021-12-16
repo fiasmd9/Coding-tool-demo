@@ -1,0 +1,60 @@
+name: cicd
+
+on:
+  push:
+    branches: ['master']
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      
+      - name: Setup JDK 11 for Sonar Cloud
+        uses: actions/setup-java@v1
+        with:
+            java-version: 11
+      
+      - name: Maven Build
+        run: mvn clean install -D skipTests=true
+      
+      - name: Run JUnit Tests
+        run: mvn test -Dmaven.test.failure.ignore=true surefire-report:report
+        
+      - name: Publish JUnit Test Report
+        if: always()
+        uses: actions/upload-artifact@v2-preview
+        with:
+          name: 'junit-test-report'
+          path: target/surefire-reports/emailable-report.html
+          
+      - name: Download a single artifact
+        uses: actions/download-artifact@v2
+        with:
+           name: junit-test-report
+          
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: test-results.xml
+      
+        env:
+            GITHUB_TOKEN: ${{ secrets.GHP_TOKEN }}
+                   
+  integrationTest:
+    needs: build
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo Run integration tests.
+      
+  deploy:
+    needs: integrationTest
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo Run deployment.
