@@ -1,0 +1,20 @@
+name: change acceleration
+
+on:
+  push:
+    branches: ['master']
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for API Action
+        uses: mydea/action-wait-for-api@v1.0.0
+        with:
+            url: "https://api.github.com/repos/fiasmd9/SampleInsurance/actions/runs"
+            expected-response-field: "total_count"
+            
+        env:
+            GITHUB_TOKEN: ${{ secrets.GHP_TOKEN }}
