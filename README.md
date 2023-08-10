@@ -4,7 +4,7 @@ Testing PI function
 test
 commit test 123
 test
-123
+123s
 test
 456s,md
 test new instanc
