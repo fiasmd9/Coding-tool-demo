@@ -7,7 +7,7 @@ test
 123s
 testn
 456s,mdxcs
-test new instancdn
+test new instancdnm
 test ut1aafalsed
 test throttle active all flows -FALSEad
 activeddk
